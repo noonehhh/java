@@ -1,0 +1,134 @@
+集合类框架
+一、Map
+1.HashMap  
+    底层实现：jdk1.7之前数组+链表，jdk1.8之后，当链表大于8转为红黑树。
+	特性:（1）允许key和value出现null值，但是只能有一个key值为null，因为key不能重复;
+	     （2）线程不安全，若想实现线程安全可用：Map m = Collections.synchronizeMap(hashMap);
+		 （3）初始size为16，扩容newsize = oldsize*2
+		      扩容针对整个Map，每次扩容时，原来数组中的元素依次重新计算存放位置，并重新插入
+              插入元素后才判断该不该扩容，有可能无效扩容（插入后如果扩容，如果没有再次插入，就会产生无效扩容）
+              当Map中元素总数超过Entry数组的75%，触发扩容操作，为了减少链表长度，元素分配更均匀
+		 （4）HashMap存值过程：
+		  1.当往hashmap里存一个键值对时，首先会调用键这个对象的hashcode方法，得到一个hashcode值，根据这个值找到对应的键值所在的数组下标
+		  2.判断该下标引用是否为null，是直接存到数组。不是，下一步
+		  3.判断已有对象key的equals方法，与要添加对象的key进行对比，如果为true，覆盖此key对应的value，如果不是，获取已存在对象的next成员变量的引用，下一步
+		  4.判断这个next所指向的值是不是为空，如果不为空，重复3的过程；如果为空，则把next引用指向要增加的对象
+		 （4）HashMap取值过程：
+		  1.调用key的hashcode方法，根据返回值定位到map里数组对应的下标
+		  2.判断这个数组下标是不是指向了null，是，返回null，不是，下一步
+		  3.判断这个引用对象key值得equals方法，与查询的key值比较，判断是否为true，是返回这个key对应的value，不是，下一步
+		  4.判断这个引用对应对象的next指的是不是null，如果是null，返回null；如果不是，取出这个next对象，重复3
+		  
+		  
+2.HashTable
+    底层实现：同HashMap
+	特性：（1）key和value都不可以为null，若试图存null进去，将会报空指针异常
+	      （2）线程安全，但效率低，因为锁住整个hash表
+		  （3）初始size为11，扩容newsize = oldsize*2+1
+		  
+3.LinkedHashMap
+    底层实现：双向链表
+	
+	特性：用双向链表维护key-value的插入顺序，迭代顺序与插入顺序一致
+	LinkedHashMap则是通过插入排序（就是你put的时候的顺序是什么，取出来的时候就是什么样子）和访问排序（改变排序把访问过的放到底部）让键值有序。
+	
+4.TreeMap
+    底层实现：基于红黑树
+	TreeMap是通过实现SortMap接口，能够把它保存的键值对根据key排序，基于红黑树，从而保证TreeMap中所有键值对处于有序状态。
+	
+5.ConcurrentHashMap
+	 HashTable实现线程安全是用synchronized锁住整个hash表，而ConcurrentHashMap是锁桶--或段，ConcurrentHashMap将hash表分为16个桶（默认值），
+	 诸如get,put,remove等常用操作只锁当前需要用到的桶。也就是说ConcurrentHashMap允许同时16个线程对其操作，而读线程几乎不受限制。
+	 
+	 ConcurrentHashMap主要实体类有三个，ConcurrentHashMap(整个hash表)、Segment(桶)、HashEntry(节点)。
+	 get方法（请注意，这里分析的方法都是针对桶的，因为ConcurrentHashMap的最大改进就是将粒度细化到了桶上），首先判断了当前桶的数据个数是否为0，
+	 为0自然不可能get到什么，只有返回null，这样做避免了不必要的搜索，也用最小的代价避免出错。然后得到头节点（方法将在下面涉及）之后就是根据hash和key
+	 逐个判断是否是指定的值，如果是并且值非空就说明找到了，直接返回。
+	 
+	 put操作一上来就锁定了整个segment，这当然是为了并发的安全，修改数据是不能并发进行的，必须得有个判断是否超限的语句以确保容量不足时能够 rehash。
+	 segment里面才是真正的hashtable，即每个segment是一个传统意义上的hashtable,如上图，从两者的结构就可以看 出区别，
+	 这里就是找出需要的entry在table的哪一个位置，之后得到的entry就是这个链的第一个节点，如果e!=null，说明找到了，
+	 这是就 要替换节点的值（onlyIfAbsent == false），否则，我们需要new一个entry，它的后继是first，而让tab[index]指向它，什么意思呢？
+	 实际上就是将这个新entry 插入到链头
+	 
+	 扩容：段内扩容（段内元素超过该段对应Entry数组长度的75%触发扩容，不会对整个Map进行扩容），插入前检测需不需要扩容，有效避免无效扩容
+	
+	
+	201902001023
+	
+二、List：有序
+
+1.vector
+    底层实现:数组
+	特性：（1）查询快，增删慢。
+	      （2）线程安全，效率低
+		  （3）默认长度10，超过会扩容为20
+2.ArrayList
+    底层实现:数组
+	特性：（1）查询快，增删慢。
+	      （2）线程不安全，效率高
+		  （3）默认长度10，扩容为15
+		  ArrayList实现了哪接口？
+		  继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。
+		  
+3.LinkedList
+    底层实现:双向链表
+	特性：（1）增删快，查询慢。
+	      （2）线程不安全，效率高
+		  
+		  与 ArrayList 的比较
+             ArrayList 基于动态数组实现，LinkedList 基于双向链表实现；
+             ArrayList 支持随机访问，LinkedList 不支持；
+             LinkedList 在任意位置添加删除元素更快。
+		  
+4.CopyOnWriteArrayList
+    底层：CopyOnWriteArrayList 是JUC包中提供的一个并发容器，是一个线程安全，读操作无锁，写操作加锁的ArrayList.
+	      写操作通过创建底层数组的新副本来实现，是一种读写分离的并发策略。
+		  
+		  特性：由于ArrayList是线程不安全的，而Vector虽然线程安全，但是由于简单粗暴的锁同步机制，性能较差。
+		        所以，CopyOnWriteArrayList容器允许并发读，读操作是无锁的，性能较高。至于写操作，比如向容器中添加一个元素，
+				则首先将当前容器复制一份，然后在新副本上执行写操作，结束之后再将原容器的引用指向新容器。
+     
+	      优点：读操作性能高，无需任何同步措施，适用于读多写少的并发场景。
+		  缺点：1.内存占用问题，在写操作时需要复制一个新的数组，使得内存占用为原来的两倍左右；
+		        2.二是无法保证实时性，Vector对于读写操作均加锁同步，可以保证读和写的强一致性。读操作不能读取实时性的数据，
+				因为部分写操作的数据还未同步到读数组中。所以 CopyOnWriteArrayList 不适合内存敏感以及对实时性要求很高的场景。
+				
+
+三、Set
+1.HashSet:特性：（1）按照哈希算法来存取集合中的对象 存取速度比较快
+                （2）当程序向HashSet中 add()的一个对象的时候, 先用hashCode方法计算出该对象的哈希码，哈希码不一致，添加；哈希码一致，不添加；相同对象不添加；
+	                 然后用equals判断对象的属性是否一致，比较结果为false就添加 true就不添加 不同对象添加。
+		
+2.LinkedHashSet 特性: 
+                （1）有序(存取一致) 是Set集合中唯一一个能保证怎么存就怎么取的集合对象 
+                （2）排重 底层是双向链表 HashSet的方法怎么用 LinkedHashSet就怎么用 
+				
+				TreeSet 二叉树 实现了SortedSet接口 能够对集合中对象进行排序
+				
+				
+面试题：
+1.什么情况下用List、Map、Set
+一、List
+（1）当经常对容器中的对象进行访问时，用List;知道索引用ArrayList;
+（2）当经常对容器中的对象增删时，用LinkedList
+（3）要保证插入顺序有序或重复时，用List
+
+二、Set
+要保证插入元素的唯一性，用Set;
+TreeSet还是一个有序Set，因为重写了comparable接口的compareTo的方法。
+
+三、Map
+若想以key-value的形式存储对象，用Map
+
+想要让列表有序，必须重写comparable接口的compareTo的方法。
+
+四、为什么HashMap线程不安全？
+     因为hash碰撞和扩容
+	 
+五、HashMap如何解决hash冲突
+     拉链地址法
+
+
+		  
+		  
