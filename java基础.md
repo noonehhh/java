@@ -1,31 +1,31 @@
-java基础
-1.String的常见方法:
-     （1）length()、charAt()、substring()、equals()、compareTo、indexOf()、toLowerCase()、toUpperCase()、replace()
-     （2）+ 、concat()、apend()都可用来拼接字符串
+# java基础
+## 1.String的常见方法:
+  * （1）length()、charAt()、substring()、equals()、compareTo、indexOf()、toLowerCase()、toUpperCase()、replace()
+  * （2）+ 、concat()、apend()都可用来拼接字符串
 
-2.java中String、StringBuffer、StringBuilder的区别
-     （1）String的值是不可变得。
-	      原因：String类中使用字符数组保存字符串，因为有“final”修饰符，所以可以知道string对象是不可变的。private final char value[];
-	 （2）StringBuffer、StringBuilder的值是可变的
-	      原因：StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串。char[] value;
-	  这样会导致每次对String的操作都会生成新对象，效率低下，浪费内存。包括String类的字符串拼接也是创造新对象。
-	 （3）String因为不可变，所以线程安全。
-	      StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。
-		  StringBuilder并没有对方法进行加同步锁，所以是非线程安全的。
-	 （4）StringBuilder与StringBuffer共同点
-	      StringBuilder与StringBuffer有公共父类AbstractStringBuilder(抽象类)。
-	 （5）初始值时，String可以赋空值，其余两者不可
+## 2.java中String、StringBuffer、StringBuilder的区别
+  * （1）String的值是不可变得。
+    原因：String类中使用字符数组保存字符串，因为有“final”修饰符，所以可以知道string对象是不可变的。private final char value[];
+  * （2）StringBuffer、StringBuilder的值是可变的
+    原因：StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串。char[] value;
+    这样会导致每次对String的操作都会生成新对象，效率低下，浪费内存。包括String类的字符串拼接也是创造新对象。
+  * （3）String因为不可变，所以线程安全。
+    StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。
+    StringBuilder并没有对方法进行加同步锁，所以是非线程安全的。
+  * （4）StringBuilder与StringBuffer共同点
+    StringBuilder与StringBuffer有公共父类AbstractStringBuilder(抽象类)。
+  * （5）初始值时，String可以赋空值，其余两者不可
 	 小结：（1）如果要操作少量的数据用 String；
-           （2）多线程操作字符串缓冲区下操作大量数据 StringBuffer；
-           （3）单线程操作字符串缓冲区下操作大量数据 StringBuilder（推荐使用）。
+               （2）多线程操作字符串缓冲区下操作大量数据 StringBuffer；
+               （3）单线程操作字符串缓冲区下操作大量数据 StringBuilder（推荐使用）。
 		
-3.接口和抽象类的区别
-    相同点：（1）二者都是抽象类，都不能实例化。
-	        （2）接口的实现类和抽象类的子类都必须要实现已经声明的抽象方法。
-	不同点：（1）接口被实现，抽象类被继承
-            （2）一个类可以实现多个接口，但一个类只能继承一个抽象类
-			（3）interface实现类及abstrct class的子类都必须要实现相应的抽象方法，但实现的形式不同。
-                 interface中的每一个方法都是抽象方法，都只是声明的(declaration,没有方法体)，实现类必须要实
+## 3.接口和抽象类的区别
+  * 相同点：（1）二者都是抽象类，都不能实例化。
+	   （2）接口的实现类和抽象类的子类都必须要实现已经声明的抽象方法。
+  * 不同点：（1）接口被实现，抽象类被继承
+           （2）一个类可以实现多个接口，但一个类只能继承一个抽象类
+	   （3）interface实现类及abstrct class的子类都必须要实现相应的抽象方法，但实现的形式不同。
+                interface中的每一个方法都是抽象方法，都只是声明的(declaration,没有方法体)，实现类必须要实
                  现。而abstractclass的子类可以有选择地实现。
 
 4.多线程的实现方式、同步的实现方式
